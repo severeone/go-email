@@ -1,7 +1,7 @@
 # go-email
 
 ### Installation
-    $ go get github.com/veqryn/go-email/email
+    $ go get github.com/severeone/go-email/email
 
 ### Releases
 This is still a work in progress.
