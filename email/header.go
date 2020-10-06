@@ -133,17 +133,78 @@ func (h Header) WriteTo(w io.Writer) (int64, error) {
 			continue // skip writing out Bcc
 		}
 		for _, val := range h[field] {
-			val = textproto.TrimString(val)
 			writer.curLineLen = 0 // Reset for next header
-			for _, s := range []string{field, ": ", mime.QEncoding.Encode("UTF-8", val), "\r\n"} {
-				written, err := io.WriteString(writer, s)
+			// write field name
+			written, err := io.WriteString(writer, field + ": ")
+			if err != nil {
+				return total, err
+			}
+			total += int64(written)
+			// write field value
+			emails, err := mail.ParseAddressList(val)
+			if err != nil || len(emails) == 0 {
+				// header is not an address list
+				encodedBytes, err := encode(writer, val)
 				if err != nil {
 					return total, err
 				}
-				total += int64(written)
+				total += encodedBytes
+			} else {
+				// header is an address list
+				encodedBytes, err := encodeAddress(writer, emails[0])
+				if err != nil {
+					return total, err
+				}
+				total += encodedBytes
+				for i := 1; i < len(emails); i++ {
+					encodedBytes, err := encodeAddress(writer, emails[i])
+					if err != nil {
+						return total, err
+					}
+					total += encodedBytes
+					written, err := io.WriteString(writer, field + ", ")
+					if err != nil {
+						return total, err
+					}
+					total += int64(written)
+				}
 			}
+			// write field ending
+			written, err = io.WriteString(writer, "\n")
+			if err != nil {
+				return total, err
+			}
+			total += int64(written)
 		}
 	}
+	return total, nil
+}
+
+// encodeAddress writes an email address with a specified writer using MIME B UTF-8 encoding
+func encodeAddress(writer *headerWriter, val *mail.Address) (int64, error) {
+	var total int64
+	encodedBytes, err := encode(writer, val.Name)
+	if err != nil {
+		return total, err
+	}
+	total += encodedBytes
+	encodedBytes, err = encode(writer, " <" + val.Address + ">")
+	if err != nil {
+		return total, err
+	}
+	total += encodedBytes
+	return total, nil
+}
+
+// encode writes a string with a specified writer using MIME B UTF-8 encoding
+func encode(writer *headerWriter, val string) (int64, error) {
+	var total int64
+	// Using B encoding here
+	written, err := io.WriteString(writer, mime.BEncoding.Encode("UTF-8", val))
+	if err != nil {
+		return total, err
+	}
+	total += int64(written)
 	return total, nil
 }
 

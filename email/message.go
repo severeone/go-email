@@ -217,7 +217,7 @@ func (m *Message) WriteTo(w io.Writer) (int64, error) {
 		return m.writeBody(w, total)
 	}
 
-	written, err := io.WriteString(w, "\r\n")
+	written, err := io.WriteString(w, "\n")
 	total += int64(written)
 	if err != nil {
 		return total, err
@@ -236,7 +236,7 @@ func (m *Message) WriteTo(w io.Writer) (int64, error) {
 func (m *Message) writeParts(w io.Writer, boundary string, total int64) (int64, error) {
 
 	if len(m.Preamble) > 0 {
-		written, err := fmt.Fprintf(w, "%s\r\n", m.Preamble)
+		written, err := fmt.Fprintf(w, "%s\n", m.Preamble)
 		total += int64(written)
 		if err != nil {
 			return total, err
@@ -244,7 +244,7 @@ func (m *Message) writeParts(w io.Writer, boundary string, total int64) (int64, 
 	}
 
 	for _, part := range m.Parts {
-		written, err := fmt.Fprintf(w, "\r\n--%s\r\n", boundary)
+		written, err := fmt.Fprintf(w, "\n--%s\n", boundary)
 		total += int64(written)
 		if err != nil {
 			return total, err
@@ -256,14 +256,14 @@ func (m *Message) writeParts(w io.Writer, boundary string, total int64) (int64, 
 		}
 	}
 
-	written, err := fmt.Fprintf(w, "\r\n--%s--\r\n", boundary)
+	written, err := fmt.Fprintf(w, "\n--%s--\n", boundary)
 	total += int64(written)
 	if err != nil {
 		return total, err
 	}
 
 	if len(m.Epilogue) > 0 {
-		written, err = fmt.Fprintf(w, "%s\r\n", m.Epilogue)
+		written, err = fmt.Fprintf(w, "%s\n", m.Epilogue)
 		total += int64(written)
 		if err != nil {
 			return total, err
@@ -286,7 +286,7 @@ func (m *Message) writeBody(w io.Writer, total int64) (int64, error) {
 		return m.writeBase64(w, total)
 	}
 
-	written, err = io.WriteString(w, "\r\n")
+	written, err = io.WriteString(w, "\n")
 	total += int64(written)
 	if err != nil {
 		return total, err
@@ -297,7 +297,7 @@ func (m *Message) writeBody(w io.Writer, total int64) (int64, error) {
 
 // writeText ...
 func (m *Message) writeText(w io.Writer, total int64) (int64, error) {
-	written, err := io.WriteString(w, "Content-Transfer-Encoding: quoted-printable\r\n\r\n")
+	written, err := io.WriteString(w, "Content-Transfer-Encoding: quoted-printable\n\n")
 	total += int64(written)
 	if err != nil {
 		return total, err
@@ -311,7 +311,7 @@ func (m *Message) writeText(w io.Writer, total int64) (int64, error) {
 
 // writeBase64 ...
 func (m *Message) writeBase64(w io.Writer, total int64) (int64, error) {
-	written, err := io.WriteString(w, "Content-Transfer-Encoding: base64\r\n\r\n")
+	written, err := io.WriteString(w, "Content-Transfer-Encoding: base64\n\n")
 	total += int64(written)
 	if err != nil {
 		return total, err

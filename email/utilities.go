@@ -111,7 +111,7 @@ func (w *headerWriter) Write(p []byte) (int, error) {
 		if err != nil {
 			return total, err
 		}
-		written, err = w.w.Write([]byte("\r\n "))
+		written, err = w.w.Write([]byte("\n"))
 		total += written
 		if err != nil {
 			return total, err
@@ -142,7 +142,7 @@ func (w *base64Writer) Write(p []byte) (int, error) {
 		if err != nil {
 			return total, err
 		}
-		written, err = w.w.Write([]byte("\r\n"))
+		written, err = w.w.Write([]byte("\n"))
 		total += written
 		if err != nil {
 			return total, err

@@ -28,9 +28,9 @@ func TestBasicEmailCreation(t *testing.T) {
 		"From":    []string{"Test Name <test.from@host.com>"},
 		"To":      []string{"test.to@host.com"},
 	}
-	expectedText := "This is a long body string that will require wrapping, and has some unicode that must be encoded,\r\n非常感谢你"
-	expectedHTML := "<html><head><meta charset=\"UTF-8\"><style>.blue { color: blue; }</style></head>\r\n" +
-		"<body>This is a long body string with some <em>HTML</em> and <span class=blue>CSS</span>\r\n" +
+	expectedText := "This is a long body string that will require wrapping, and has some unicode that must be encoded,\n非常感谢你"
+	expectedHTML := "<html><head><meta charset=\"UTF-8\"><style>.blue { color: blue; }</style></head>\n" +
+		"<body>This is a long body string with some <em>HTML</em> and <span class=blue>CSS</span>\n" +
 		"that will require wrapping, and has some unicode that must be encoded,</br>非常感谢你</body></html>"
 
 	// Create test message
@@ -150,13 +150,13 @@ func TestInlineEmailCreation(t *testing.T) {
 		"To":      []string{"test.to@host.com, Another To TestName <another.to@host.com>, third.test.to@host.org"},
 		"Cc":      []string{"CC TestName <test.cc@host.com>, another.cc@host.net"},
 	}
-	expectedText := "This is a long body string that will require wrapping, and has some unicode that must be encoded,\r\n非常感谢你"
-	expectedHTML := "<html><head><meta charset=\"UTF-8\"><style>.blue { color: blue; }</style></head>\r\n" +
-		"<body>This is a long body string with some <em>HTML</em> and <span class=blue>CSS</span>\r\n" +
+	expectedText := "This is a long body string that will require wrapping, and has some unicode that must be encoded,\n非常感谢你"
+	expectedHTML := "<html><head><meta charset=\"UTF-8\"><style>.blue { color: blue; }</style></head>\n" +
+		"<body>This is a long body string with some <em>HTML</em> and <span class=blue>CSS</span>\n" +
 		"that will require wrapping, and has some unicode that must be encoded,</br>非常感谢你</body></html>"
 	expectedPreamble := "This is a MIME-encapsulated multipart message."
 	expectedEpilogue := "This is an epilogue, which while technically valid, should never be used"
-	expectedCsv := []byte("foo,bar,\r\nbaz,quux,\r\n,ix,\r\npo,柳条制,wum\r\n")
+	expectedCsv := []byte("foo,bar,\nbaz,quux,\n,ix,\npo,柳条制,wum\n")
 	expectedGif := bytesOrPanic(hex.DecodeString("47494638396114001600c20000ffffffccffff99999" +
 		"933333300000000000000000000000021fe4e546869732061727420697320696e20746865207075626c69632064" +
 		"6f6d61696e2e204b6576696e204875676865732c206b6576696e68406569742e636f6d2c2053657074656d62657" +
