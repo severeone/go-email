@@ -157,16 +157,16 @@ func (h Header) WriteTo(w io.Writer) (int64, error) {
 				}
 				total += encodedBytes
 				for i := 1; i < len(emails); i++ {
+					written, err := io.WriteString(writer, ", ")
+					if err != nil {
+						return total, err
+					}
+					total += int64(written)
 					encodedBytes, err := encodeAddress(writer, emails[i])
 					if err != nil {
 						return total, err
 					}
 					total += encodedBytes
-					written, err := io.WriteString(writer, field + ", ")
-					if err != nil {
-						return total, err
-					}
-					total += int64(written)
 				}
 			}
 			// write field ending
@@ -188,7 +188,10 @@ func encodeAddress(writer *headerWriter, val *mail.Address) (int64, error) {
 		return total, err
 	}
 	total += encodedBytes
-	encodedBytes, err = encode(writer, " <" + val.Address + ">")
+	if encodedBytes != 0 {
+		val.Address = " <" + val.Address + ">"
+	}
+	encodedBytes, err = encode(writer, val.Address)
 	if err != nil {
 		return total, err
 	}
